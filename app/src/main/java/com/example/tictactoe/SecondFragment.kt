@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.tictactoe.algorythm.Game
+import com.example.tictactoe.common.GAME_MODE
 import com.example.tictactoe.databinding.FragmentSecondBinding
 
 /**
@@ -14,21 +16,21 @@ import com.example.tictactoe.databinding.FragmentSecondBinding
 class SecondFragment : Fragment() {
 
     companion object {
-        const val GRID_SIZE = 3
+        //const val GRID_SIZE = 3
         const val PVE_MODE = "pve"
         const val EVE_MODE = "eve"
+
+        /**
+         * @param STEP
+         * false = X
+         * true = O
+         */
+        var STEP = false
     }
 
+    private lateinit var _game: Game
+
     private var _binding: FragmentSecondBinding? = null
-
-    /**
-     * @param step
-     * false = X
-     * true = O
-     */
-    private var step = false
-
-    private val gridArray = Array(GRID_SIZE) { arrayOfNulls<Byte?>(GRID_SIZE) }
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -37,7 +39,6 @@ class SecondFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
-
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
 
@@ -46,70 +47,73 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (arguments?.getInt("generations") != null && arguments?.getString("mode") == EVE_MODE) {
+        val grid = arrayOf(
+            arrayOf(binding.button00, binding.button01, binding.button02),
+            arrayOf(binding.button10, binding.button11, binding.button12),
+            arrayOf(binding.button20, binding.button21, binding.button22)
+        )
+
+        if (arguments?.getInt("generations") != null && arguments?.getString("mode") == GAME_MODE.EVE_MODE.value) {
             binding.field.visibility = View.GONE
+            setGridOnClickListeners()
             val generations = arguments?.getInt("generations")!!
             // init eve
-        } else if (arguments?.getString("mode") == PVE_MODE) {
+            _game = Game(grid, generations, context)
+            _game.StartEve()
+        } else if (arguments?.getString("mode") == GAME_MODE.PVE_MODE.value) {
             setGridOnClickListeners()
             // init pve
+            _game = Game(grid, context)
+            //game.StartEve()
         }
 
     }
 
     private fun setGridOnClickListeners() {
         binding.button00.setOnClickListener {
-            gridArray[0][0] = printText(binding.button00)
-            step = !step
+            updateButton(binding.button00, 0, 0)
         }
 
         binding.button01.setOnClickListener {
-            gridArray[0][1] = printText(binding.button01)
-            step = !step
+            updateButton(binding.button01, 0, 1)
         }
 
         binding.button02.setOnClickListener {
-            gridArray[0][2] = printText(binding.button02)
-            step = !step
+            updateButton(binding.button02, 0, 2)
         }
 
         binding.button10.setOnClickListener {
-            gridArray[1][0] = printText(binding.button10)
-            step = !step
+            updateButton(binding.button10, 1, 0)
         }
 
         binding.button11.setOnClickListener {
-            gridArray[1][1] = printText(binding.button11)
-            step = !step
+            updateButton(binding.button11, 1, 1)
         }
 
         binding.button12.setOnClickListener {
-            gridArray[1][2] = printText(binding.button12)
-            step = !step
+            updateButton(binding.button12, 1, 2)
         }
 
         binding.button20.setOnClickListener {
-            gridArray[2][0] = printText(binding.button20)
-            step = !step
+            updateButton(binding.button20, 2, 0)
         }
 
         binding.button21.setOnClickListener {
-            gridArray[2][1] = printText(binding.button21)
-            step = !step
+            updateButton(binding.button21, 2, 1)
         }
 
         binding.button22.setOnClickListener {
-            gridArray[2][2] = printText(binding.button22)
-            step = !step
+            updateButton(binding.button22, 2, 2)
         }
     }
 
-    private fun printText(button: Button): Byte? {
-        return if (button.text.isEmpty()) {
-            button.text = if (step) "O" else "X"
-            if (step) 0 else 1
-        } else {
-            null
+    private fun updateButton(button: Button, x: Int, y: Int) {
+        if (button.text.isEmpty()) {
+            button.text = if (STEP) "O" else "X"
+            if (_game.checkStep(STEP, x, y)){
+                binding.field.visibility = View.GONE
+            }
+            STEP = !STEP
         }
     }
 
