@@ -25,6 +25,10 @@ public abstract class Player (isCurrent: Boolean){
         _isCurrent = !_isCurrent
     }
 
+    fun getIsCurrent(): Boolean{
+        return _isCurrent;
+    }
+
     protected fun makeKey(fieldState: Array<Array<String?>>, switchSigns: Boolean): String{
         val fieldStr = (fieldState[0].joinToString(separator = "") { getEmptyCellSign(it)}
                 + fieldState[1].joinToString(separator = "") {  getEmptyCellSign(it) }

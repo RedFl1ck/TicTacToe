@@ -1,15 +1,13 @@
 package com.example.tictactoe.algorythm
 
-import android.R.attr.data
 import android.content.Context
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import android.widget.Button
 import com.example.tictactoe.SecondFragment.Companion.STEP
 import com.example.tictactoe.common.GAME_MODE
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
-import java.io.FileReader
+import java.io.PrintWriter
 
 
 /**
@@ -20,11 +18,11 @@ class Game {
 
     private val _weightsFileName: String = "weights.txt"
 
-    private lateinit var _context: Context
+    private var _context: Context
 
     private val _grid: Array<Array<Button>>
 
-    private lateinit var _fieldState: Array<Array<String?>>
+    private var _fieldState: Array<Array<String?>>
 
     private var _fieldWeights: HashMap<String, Double>
 
@@ -32,16 +30,16 @@ class Game {
 
     private var _players: List<Player>
 
-    private var _mode: GAME_MODE
+    var gameMode: GAME_MODE
 
-    private var _done: Boolean = false
+    var IsGameFinished: Boolean = false
 
     fun Boolean.toInt() = if (this) 1 else 0
 
     constructor(grid: Array<Array<Button>>, generations: Int, context: Context?) {
         _generations = generations
         _players = listOf(AiPlayer(true), AiPlayer(false))
-        _mode = GAME_MODE.EVE_MODE
+        gameMode = GAME_MODE.EVE_MODE
         _grid = grid
         _fieldState = arrayOf(
             arrayOfNulls(3),
@@ -60,8 +58,13 @@ class Game {
 
     constructor(grid: Array<Array<Button>>, context: Context?) {
         _players = listOf(HumanPlayer(true), AiPlayer(false))
-        _mode = GAME_MODE.PVE_MODE
+        gameMode = GAME_MODE.PVE_MODE
         _grid = grid
+        _fieldState = arrayOf(
+            arrayOfNulls(3),
+            arrayOfNulls(3),
+            arrayOfNulls(3)
+        )
         if (context != null){
             _context = context
             _fieldWeights = readOrCreateWeightsFile(context)
@@ -97,15 +100,15 @@ class Game {
         else null
     }
 
-    fun StartEve() {
+    fun startEve() {
         for (i in 0.._generations) {
             while (true) {
                 val player = _players[STEP.toInt()]
                 val coords = player.makeStep(_fieldState, _fieldWeights)
-                _fieldState[coords.first][coords.second] = if (STEP) "O" else "X"
+                //_fieldState[coords.first][coords.second] = if (STEP) "O" else "X"
                 _grid[coords.first][coords.second].performClick()
-                if (_done){
-                    _done = false
+                if (IsGameFinished){
+                    IsGameFinished = false
                     resetGame()
                     break
                 }
@@ -114,10 +117,42 @@ class Game {
         writeWeightsToFile()
     }
 
+    fun isBotTurn(): Boolean{
+        val thisPlayer = _players.find { it -> it.getIsCurrent() }
+        // во прикол
+        if (thisPlayer != null && thisPlayer::class == AiPlayer::class){
+            return true;
+        }
+        return false;
+    }
+
+    fun botTurn(){
+        // еще прикол
+        val player = _players.find { it -> it::class == AiPlayer::class}
+        val coords = player!!.makeStep(_fieldState, _fieldWeights)
+        _fieldState[coords.first][coords.second] = if (STEP) "O" else "X"
+        _grid[coords.first][coords.second].performClick()
+    }
+
     private fun writeWeightsToFile() {
         val file = File(_context.filesDir, _weightsFileName)
+        val result: HashMap<String, Double> = HashMap()
+        FileInputStream(file).bufferedReader().use {
+            var line: String?
+            while (it.readLine().also { line = it } != null) {
+                val pair = makePair(line)
+                if (pair != null)
+                    result[pair.first] = pair.second
+            }
+        }
+        for (situation in _fieldWeights){
+            result[situation.key] = situation.value
+        }
+
+        PrintWriter("${_context.filesDir}/${_weightsFileName}").close()
+
         FileOutputStream(file).use {
-            for (situation in _fieldWeights)
+            for (situation in result)
                 file.appendText("${situation.key}:${situation.value}${System.lineSeparator()}")
         }
     }
@@ -168,7 +203,7 @@ class Game {
         return isWin;
     }
 
-    fun checkStep(step: Boolean, x: Int, y: Int): Boolean {
+    fun checkStep(): Boolean {
         val player = _players[STEP.toInt()]
         val playerO = _players[(!STEP).toInt()]
         player.switchIsCurrent()
@@ -176,14 +211,18 @@ class Game {
         return if (isWin(player)) {
             player.win(_fieldState, _fieldWeights, STEP)
             playerO.loose(_fieldState, _fieldWeights, !STEP)
-            _done = true
+            IsGameFinished = true
             true
         } else if (isDraw()) {
             player.draw(_fieldState, _fieldWeights, STEP)
-            _done = true
+            IsGameFinished = true
             true
         } else {
             false
         }
+    }
+
+    fun updateFieldState(x: Int, y: Int, sign: String) {
+        _fieldState[x][y] = sign;
     }
 }

@@ -59,7 +59,7 @@ class SecondFragment : Fragment() {
             val generations = arguments?.getInt("generations")!!
             // init eve
             _game = Game(grid, generations, context)
-            _game.StartEve()
+            _game.startEve()
         } else if (arguments?.getString("mode") == GAME_MODE.PVE_MODE.value) {
             setGridOnClickListeners()
             // init pve
@@ -71,7 +71,7 @@ class SecondFragment : Fragment() {
 
     private fun setGridOnClickListeners() {
         binding.button00.setOnClickListener {
-            updateButton(binding.button00, 0, 0)
+            updateButton(binding.button00, 0 ,0)
         }
 
         binding.button01.setOnClickListener {
@@ -108,12 +108,22 @@ class SecondFragment : Fragment() {
     }
 
     private fun updateButton(button: Button, x: Int, y: Int) {
+
         if (button.text.isEmpty()) {
             button.text = if (STEP) "O" else "X"
-            if (_game.checkStep(STEP, x, y)){
+            button.invalidate()
+            _game.updateFieldState(x, y, if (STEP) "O" else "X")
+            if (_game.checkStep()){
+                // ToDo сделать всплывашку/надпись/etc
                 binding.field.visibility = View.GONE
             }
             STEP = !STEP
+            // Note: _isCurrent у игрока обновляется внутри checkStep. Да, все плохо
+            val isBotTurn = _game.isBotTurn() && _game.gameMode == GAME_MODE.PVE_MODE
+            if (isBotTurn){
+                _game.botTurn()
+            }
+
         }
     }
 

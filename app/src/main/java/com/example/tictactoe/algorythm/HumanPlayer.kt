@@ -12,14 +12,14 @@ public class HumanPlayer(isCurrent: Boolean) : Player(isCurrent) {
     }
 
     override fun loose(_fieldState: Array<Array<String?>>, _fieldWeights: HashMap<String, Double>, switchSigns: Boolean) {
-        TODO("Not yet implemented")
+
     }
 
     override fun win(_fieldState: Array<Array<String?>>, _fieldWeights: HashMap<String, Double>, switchSigns: Boolean) {
-        TODO("Not yet implemented")
+
     }
 
     override fun draw(_fieldState: Array<Array<String?>>, _fieldWeights: HashMap<String, Double>, switchSigns: Boolean) {
-        TODO("Not yet implemented")
+
     }
 }

@@ -8,7 +8,7 @@ import kotlin.random.Random
 /**
  * AI player
  */
-public class AiPlayer(isCurrent: Boolean) : Player(isCurrent) {
+class AiPlayer(isCurrent: Boolean) : Player(isCurrent) {
 
     override fun makeStep(
         _fieldState: Array<Array<String?>>,
