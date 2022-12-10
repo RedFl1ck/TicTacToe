@@ -59,7 +59,8 @@ class SecondFragment : Fragment() {
             val generations = arguments?.getInt("generations")!!
             // init eve
             _game = Game(grid, generations, context)
-            _game.startEve()
+            binding.textWinner.visibility = View.VISIBLE
+            _game.startEve(binding.textWinner)
         } else if (arguments?.getString("mode") == GAME_MODE.PVE_MODE.value) {
             setGridOnClickListeners()
             // init pve
@@ -71,7 +72,7 @@ class SecondFragment : Fragment() {
 
     private fun setGridOnClickListeners() {
         binding.button00.setOnClickListener {
-            updateButton(binding.button00, 0 ,0)
+            updateButton(binding.button00, 0, 0)
         }
 
         binding.button01.setOnClickListener {
@@ -109,19 +110,20 @@ class SecondFragment : Fragment() {
 
     private fun updateButton(button: Button, x: Int, y: Int) {
 
-        if (button.text.isEmpty()) {
+        if (button.text.isEmpty() && !_game.IsGameFinished) {
             button.text = if (STEP) "O" else "X"
             button.invalidate()
             _game.updateFieldState(x, y, if (STEP) "O" else "X")
-            if (_game.checkStep()){
-                // ToDo сделать всплывашку/надпись/etc
-                binding.field.visibility = View.GONE
-            }
-            STEP = !STEP
-            // Note: _isCurrent у игрока обновляется внутри checkStep. Да, все плохо
-            val isBotTurn = _game.isBotTurn() && _game.gameMode == GAME_MODE.PVE_MODE
-            if (isBotTurn){
-                _game.botTurn()
+            if (_game.checkStep() && _game.gameMode == GAME_MODE.PVE_MODE) {
+                binding.textWinner.text = _game.getWinner()
+                binding.textWinner.visibility = View.VISIBLE
+            } else {
+                STEP = !STEP
+                // Note: _isCurrent у игрока обновляется внутри checkStep. Да, все плохо
+                val isBotTurn = _game.isBotTurn() && _game.gameMode == GAME_MODE.PVE_MODE
+                if (isBotTurn) {
+                    _game.botTurn()
+                }
             }
 
         }
@@ -130,5 +132,7 @@ class SecondFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _game.resetGame()
+        STEP = false
     }
 }

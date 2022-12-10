@@ -26,8 +26,8 @@
                 android:layout_height="fill_parent">
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_00"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="0"
@@ -37,8 +37,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_01"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="1"
@@ -48,8 +48,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_02"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="2"
@@ -64,8 +64,8 @@
                 android:layout_height="fill_parent">
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_10"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="0"
@@ -75,8 +75,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_11"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="1"
@@ -86,8 +86,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_12"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="2"
@@ -102,8 +102,8 @@
                 android:layout_height="fill_parent">
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_20"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="0"
@@ -113,8 +113,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_21"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="1"
@@ -124,8 +124,8 @@
                     app:strokeWidth="2dp" />
 
                 <Button
-                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:id="@+id/button_22"
+                    style="@style/Widget.Material3.Button.IconButton.Outlined"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_column="2"
@@ -136,5 +136,17 @@
             </TableRow>
 
         </TableLayout>
+
+        <TextView
+            android:id="@+id/text_winner"
+            style="@style/Widget.Material3.Button.TextButton.Dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="WINNER IS "
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/field" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
