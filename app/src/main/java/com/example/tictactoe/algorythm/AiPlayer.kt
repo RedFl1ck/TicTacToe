@@ -1,12 +1,29 @@
 package com.example.tictactoe.algorythm
 
 import com.example.tictactoe.SecondFragment.Companion.STEP
+import kotlin.math.abs
 import kotlin.random.Random
 
 /**
  * AI player
  */
 class AiPlayer(isCurrent: Boolean) : Player(isCurrent) {
+
+    companion object{
+        fun generateNewState(_fieldState: Array<Array<String?>>): Array<Array<String?>> {
+            val newState: Array<Array<String?>> = arrayOf(
+                arrayOfNulls(3),
+                arrayOfNulls(3),
+                arrayOfNulls(3)
+            )
+            for (i in 0..2) {
+                for (j in 0..2) {
+                    newState[i][j] = _fieldState[i][j]
+                }
+            }
+            return newState
+        }
+    }
 
     override fun makeStep(
         _fieldState: Array<Array<String?>>,
@@ -38,7 +55,7 @@ class AiPlayer(isCurrent: Boolean) : Player(isCurrent) {
                 0.5
             }
             if (!isGreedy) {
-                if (weight > maxWeight) {
+                if (weight > maxWeight || abs(weight - maxWeight) < 0.05 && Random.nextDouble() >= 0.5) {
                     maxWeight = weight
                     coords = freeCell
                 }
@@ -75,19 +92,5 @@ class AiPlayer(isCurrent: Boolean) : Player(isCurrent) {
         _fieldWeights: HashMap<String, Double>, switchSigns: Boolean
     ) {
         correct(_fieldWeights, makeKey(_fieldState, switchSigns), 0.5)
-    }
-
-    private fun generateNewState(_fieldState: Array<Array<String?>>): Array<Array<String?>> {
-        val newState: Array<Array<String?>> = arrayOf(
-            arrayOfNulls(3),
-            arrayOfNulls(3),
-            arrayOfNulls(3)
-        )
-        for (i in 0..2) {
-            for (j in 0..2) {
-                newState[i][j] = _fieldState[i][j]
-            }
-        }
-        return newState
     }
 }

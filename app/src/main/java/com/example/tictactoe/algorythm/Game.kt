@@ -23,6 +23,8 @@ class Game {
 
     private val _grid: Array<Array<Button>>
 
+    private lateinit var _previousFieldState: Array<Array<String?>>
+
     private var _fieldState: Array<Array<String?>>
 
     private var _fieldWeights: HashMap<String, Double>
@@ -99,7 +101,6 @@ class Game {
             while (true) {
                 val player = _players[STEP.toInt()]
                 val coords = player.makeStep(_fieldState, _fieldWeights)
-                //_fieldState[coords.first][coords.second] = if (STEP) "O" else "X"
                 _grid[coords.first][coords.second].performClick()
                 if (IsGameFinished) {
                     IsGameFinished = false
@@ -122,7 +123,7 @@ class Game {
     fun botTurn() {
         val player = _players.find { it is AiPlayer }
         val coords = player!!.makeStep(_fieldState, _fieldWeights)
-        _fieldState[coords.first][coords.second] = if (STEP) "O" else "X"
+        updateFieldState(coords.first, coords.second, if (STEP) "O" else "X")
         _grid[coords.first][coords.second].performClick()
     }
 
@@ -133,7 +134,7 @@ class Game {
             "DRAW"
     }
 
-    private fun writeWeightsToFile() {
+    fun writeWeightsToFile() {
         val file = File(_context.filesDir, _weightsFileName)
         val result: HashMap<String, Double> = HashMap()
         FileInputStream(file).bufferedReader().use {
@@ -205,7 +206,7 @@ class Game {
         playerO.switchIsCurrent()
         return if (isWin()) {
             player.win(_fieldState, _fieldWeights, STEP)
-            playerO.loose(_fieldState, _fieldWeights, !STEP)
+            playerO.loose(_previousFieldState, _fieldWeights, !STEP)
             IsGameFinished = true
             true
         } else if (isDraw()) {
@@ -218,6 +219,7 @@ class Game {
     }
 
     fun updateFieldState(x: Int, y: Int, sign: String) {
+        _previousFieldState = AiPlayer.generateNewState(_fieldState)
         _fieldState[x][y] = sign;
     }
 }

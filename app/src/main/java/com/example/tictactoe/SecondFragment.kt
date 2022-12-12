@@ -67,7 +67,6 @@ class SecondFragment : Fragment() {
             _game = Game(grid, context)
             //game.StartEve()
         }
-
     }
 
     private fun setGridOnClickListeners() {
@@ -115,6 +114,7 @@ class SecondFragment : Fragment() {
             button.invalidate()
             _game.updateFieldState(x, y, if (STEP) "O" else "X")
             if (_game.checkStep() && _game.gameMode == GAME_MODE.PVE_MODE) {
+                _game.writeWeightsToFile()
                 binding.textWinner.text = _game.getWinner()
                 binding.textWinner.visibility = View.VISIBLE
             } else {
@@ -125,7 +125,6 @@ class SecondFragment : Fragment() {
                     _game.botTurn()
                 }
             }
-
         }
     }
 
